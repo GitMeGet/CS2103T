@@ -454,12 +454,28 @@ public class AddressBook {
     private static ArrayList<String[]> getPersonsWithNameContainingAnyKeyword(Collection<String> keywords) {
         final ArrayList<String[]> matchedPersons = new ArrayList<>();
         for (String[] person : getAllPersonsInAddressBook()) {
+        	// put individual words of person's name into a set
             final Set<String> wordsInName = new HashSet<>(splitByWhitespace(getNameFromPerson(person)));
-            if (!Collections.disjoint(wordsInName, keywords)) {
+            if (matchKeywords(wordsInName, keywords)) {
                 matchedPersons.add(person);
             }
         }
         return matchedPersons;
+    }
+    
+    private static boolean matchKeywords(Set<String> wordsInName, Collection<String> keywords){
+    	
+    	String [] nameWords = wordsInName.toArray(new String[wordsInName.size()]);
+    	String [] keyWords = keywords.toArray(new String[keywords.size()]);
+    	
+    	for (int i = 0; i < nameWords.length; i++){
+    		for (int j = 0; j < keyWords.length; j++){
+    			if (nameWords[i].compareToIgnoreCase(keyWords[j]) == 0)
+    				return true;
+    		}
+    	}
+    	
+    	return false;
     }
 
     /**
