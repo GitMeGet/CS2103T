@@ -350,6 +350,8 @@ public class AddressBook {
             return executeClearAddressBook();
         case COMMAND_WORD_HELP:
             return getUsageInfoForAllCommands();
+        case "sort" :
+        	return executeSort();
         case COMMAND_WORD_EXIT:
             executeExitProgramRequest();
         default:
@@ -357,6 +359,20 @@ public class AddressBook {
         }
     }
 
+    private static String executeSort(){
+    	ArrayList<String[]> persons = getAllPersonsInAddressBook();
+            
+        Collections.sort(persons, new Comparator<String[]>(){
+        	@Override
+        	public int compare(String[] one, String[] two){
+        		return one[0].compareTo(two[0]);
+        	}
+        });
+
+    
+    	return "Sorted!";
+    }
+    
     /**
      * Splits raw user input into command word and command arguments string
      *
