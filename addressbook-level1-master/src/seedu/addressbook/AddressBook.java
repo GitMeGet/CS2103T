@@ -350,6 +350,9 @@ public class AddressBook {
             return executeClearAddressBook();
         case COMMAND_WORD_HELP:
             return getUsageInfoForAllCommands();
+        case "sort" :
+        	executeSort();
+        	return executeListAllPersonsInAddressBook(); 
         case COMMAND_WORD_EXIT:
             executeExitProgramRequest();
         default:
@@ -357,6 +360,17 @@ public class AddressBook {
         }
     }
 
+    private static void executeSort(){
+    	ArrayList<String[]> persons = getAllPersonsInAddressBook();
+            
+        Collections.sort(persons, new Comparator<String[]>(){
+        	@Override
+        	public int compare(String[] one, String[] two){
+        		return one[0].compareTo(two[0]);
+        	}
+        });
+    }
+    
     /**
      * Splits raw user input into command word and command arguments string
      *
@@ -454,12 +468,28 @@ public class AddressBook {
     private static ArrayList<String[]> getPersonsWithNameContainingAnyKeyword(Collection<String> keywords) {
         final ArrayList<String[]> matchedPersons = new ArrayList<>();
         for (String[] person : getAllPersonsInAddressBook()) {
+        	// put individual words of person's name into a set
             final Set<String> wordsInName = new HashSet<>(splitByWhitespace(getNameFromPerson(person)));
-            if (!Collections.disjoint(wordsInName, keywords)) {
+            if (matchKeywords(wordsInName, keywords)) {
                 matchedPersons.add(person);
             }
         }
         return matchedPersons;
+    }
+    
+    private static boolean matchKeywords(Set<String> wordsInName, Collection<String> keywords){
+    	
+    	String [] nameWords = wordsInName.toArray(new String[wordsInName.size()]);
+    	String [] keyWords = keywords.toArray(new String[keywords.size()]);
+    	
+    	for (int i = 0; i < nameWords.length; i++){
+    		for (int j = 0; j < keyWords.length; j++){
+    			if (nameWords[i].compareToIgnoreCase(keyWords[j]) == 0)
+    				return true;
+    		}
+    	}
+    	
+    	return false;
     }
 
     /**
